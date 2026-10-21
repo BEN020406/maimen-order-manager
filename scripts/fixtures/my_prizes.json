@@ -1,0 +1,31 @@
+{
+  "_fixture": "按 query-my-prizes 官方返回结构构造的离线样例。",
+  "data": {
+    "status": { "code": "SUCCESS", "message": "ok" },
+    "pageNum": 1,
+    "prizes": [
+      {
+        "id": "PZ20261020001",
+        "name": "免费中薯条",
+        "prizeType": 1,
+        "prizeTypeText": "优惠券",
+        "recordTime": "2026-10-20 13:02:11",
+        "status": 0,
+        "statusText": "可用",
+        "timeRemindText": "2026-11-20 前有效",
+        "sourceDesc": "麦麦幸运抽"
+      },
+      {
+        "id": "PZ20261012002",
+        "name": "满 30 减 5 券",
+        "prizeType": 1,
+        "prizeTypeText": "优惠券",
+        "recordTime": "2026-10-12 21:15:40",
+        "status": 0,
+        "statusText": "可用",
+        "timeRemindText": "2026-11-12 前有效",
+        "sourceDesc": "麦麦幸运抽"
+      }
+    ]
+  }
+}

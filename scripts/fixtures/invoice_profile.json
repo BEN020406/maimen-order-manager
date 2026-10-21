@@ -1,0 +1,6 @@
+{
+  "_fixture": "开票资料样例。税号为公开示例编码，仅用于校验与脱敏测试。",
+  "company_name": "上海示例科技有限公司",
+  "tax_id": "91350100M000100Y43",
+  "email": "finance@example.com"
+}

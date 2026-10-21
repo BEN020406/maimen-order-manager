@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/logo-192.png">
+<title>麦门订单管家 · 个人效率工具（非官方）</title>
+<style>
+:root{
+  --red:#DA291C; --red-press:#B01E13; --red-soft:#FDECEA;
+  --yellow:#FFC72C; --yellow-deep:#F2B301; --yellow-soft:#FFF3CE;
+  --cream:#FFF8EE; --surface:#FFFFFF;
+  --ink:#1F1B16; --muted:#6B6259; --line:#F0E4D4;
+  --green:#1E8E5A; --green-soft:#E8F6EE;
+  --danger:#B3261E;
+  --shadow-sm:0 1px 2px rgba(31,27,22,.05);
+  --shadow:0 2px 4px rgba(31,27,22,.04),0 12px 28px rgba(31,27,22,.07);
+  --shadow-pop:0 8px 32px rgba(31,27,22,.14);
+  --r-lg:24px; --r-md:20px; --r-sm:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --cream:#151210; --surface:#221D18;
+    --ink:#FAF3E7; --muted:#A79C8C; --line:#332B23;
+    --red-soft:#3A1D18; --green-soft:#16301F; --yellow-soft:#3A2F12;
+    --shadow-sm:0 1px 2px rgba(0,0,0,.5);
+    --shadow:0 2px 4px rgba(0,0,0,.4),0 12px 28px rgba(0,0,0,.35);
+    --shadow-pop:0 8px 32px rgba(0,0,0,.55);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--cream);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+  font-size:16px;line-height:1.55;overflow-x:hidden;
+}
+.mono{font-family:"SF Mono","IBM Plex Mono",Consolas,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.3px}
+button{font-family:inherit}
+:focus-visible{outline:3px solid var(--red);outline-offset:3px;border-radius:10px}
+
+/* ============ 顶部应用栏 ============ */
+.appbar{
+  position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surface) 88%,transparent);
+  backdrop-filter:saturate(1.6) blur(14px);border-bottom:1px solid var(--line);
+}
+.appbar__in{
+  max-width:1120px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:12px;
+}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand__mark{
+  width:46px;height:46px;flex:0 0 46px;display:grid;place-items:center;
+}
+.brand__mark img{width:100%;height:100%;object-fit:contain;display:block}
+.brand__text{min-width:0}
+.brand__title{font-size:17px;font-weight:800;letter-spacing:-.3px;margin:0;white-space:nowrap}
+.brand__sub{font-size:11px;font-weight:600;color:var(--muted);margin:1px 0 0;white-space:nowrap}
+.appbar__spacer{flex:1}
+.iconbtn{
+  width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);
+  color:var(--ink);display:grid;place-items:center;cursor:pointer;flex:0 0 44px;
+  transition:transform .15s,background .15s;
+}
+.iconbtn:active{transform:scale(.94)}
+
+/* ============ 内容容器 ============ */
+.content{max-width:1120px;margin:0 auto;padding:18px 20px 40px}
+.section{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:26px 0 12px}
+.section h2{font-size:19px;font-weight:800;letter-spacing:-.4px;margin:0}
+.section p{font-size:12px;font-weight:600;color:var(--muted);margin:0}
+
+/* ============ 主视觉卡 ============ */
+.hero{
+  position:relative;border-radius:var(--r-lg);padding:20px 22px 22px;overflow:hidden;
+  background:linear-gradient(135deg,#FFD75E 0%,var(--yellow) 55%,#FFB800 100%);
+  color:#1F1B16;box-shadow:0 10px 30px rgba(255,183,0,.28);
+}
+.hero::after{
+  content:"";position:absolute;right:-46px;bottom:-70px;width:190px;height:190px;border-radius:50%;
+  background:rgba(255,255,255,.22);
+}
+.hero__main{position:relative;z-index:1;min-width:0;flex:1}
+.hero__stats{
+  position:relative;z-index:1;display:none;list-style:none;margin:0;padding:0;gap:8px;
+}
+.hero__stats li{
+  background:rgba(255,255,255,.5);border-radius:14px;padding:9px 14px;min-width:92px;text-align:center;
+}
+.hero__stats b{display:block;font-size:17px;font-weight:800;letter-spacing:-.4px;line-height:1.2}
+.hero__stats span{display:block;font-size:11px;font-weight:700;color:rgba(31,27,22,.62);margin-top:2px}
+.hero__top{display:flex;align-items:center;justify-content:space-between;gap:10px;position:relative;z-index:1}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 11px;border-radius:999px;
+  background:rgba(255,255,255,.55);font-size:12px;font-weight:700;color:#1F1B16;white-space:nowrap;
+  max-width:100%;overflow:hidden;text-overflow:ellipsis;
+}
+.hero__sync{font-size:12px;font-weight:600;color:rgba(31,27,22,.6);white-space:nowrap}
+.hero__label{position:relative;z-index:1;margin:14px 0 0;font-size:13px;font-weight:700;color:rgba(31,27,22,.62)}
+.hero__num{
+  position:relative;z-index:1;margin:0;display:flex;align-items:baseline;gap:8px;
+}
+.hero__num strong{font-size:46px;line-height:1.05;font-weight:800;letter-spacing:-2px}
+.hero__num span{font-size:15px;font-weight:700}
+.hero__actions{position:relative;z-index:1;display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+
+/* ============ 按钮 ============ */
+.btn{
+  min-height:46px;padding:0 20px;border-radius:999px;border:1px solid transparent;
+  font-size:15px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;
+  justify-content:center;gap:7px;transition:transform .15s,filter .15s,background .15s;
+}
+.btn:active{transform:scale(.98)}
+.btn--red{background:var(--red);color:#fff;box-shadow:0 4px 14px rgba(218,41,28,.3)}
+.btn--red:hover{background:var(--red-press)}
+.btn--white{background:#fff;color:#1F1B16;box-shadow:var(--shadow-sm)}
+.btn--white:hover{background:#FFFDF8}
+.btn--outline{background:transparent;border-color:var(--line);color:var(--ink)}
+.btn--outline:hover{background:var(--surface)}
+.btn--block{width:100%}
+.btn[disabled]{opacity:.6;cursor:default}
+
+/* ============ 三张模块卡 ============ */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tile{
+  position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);
+  padding:16px 16px 14px;display:flex;flex-direction:column;min-height:176px;
+  box-shadow:var(--shadow);transition:transform .18s,box-shadow .18s;overflow:hidden;
+}
+.tile:hover{transform:translateY(-2px);box-shadow:var(--shadow-pop)}
+.tile:focus-within{box-shadow:var(--shadow-pop)}
+.tile__head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.tile__icon{
+  width:44px;height:44px;border-radius:15px;display:grid;place-items:center;flex:0 0 44px;
+  background:var(--red-soft);color:var(--red);
+}
+.tile--confirm .tile__icon{background:var(--yellow-soft);color:#8A6410}
+.tile--done .tile__icon{background:var(--green-soft);color:var(--green)}
+.tile--unavailable .tile__icon{background:transparent;color:var(--muted);border:1px dashed var(--line)}
+.tile__flag{
+  font-size:11px;font-weight:800;letter-spacing:.2px;padding:4px 9px;border-radius:999px;
+  background:var(--red);color:#fff;white-space:nowrap;
+}
+.tile--confirm .tile__flag{background:var(--yellow);color:#1F1B16}
+.tile--done .tile__flag{background:var(--green-soft);color:var(--green)}
+.tile--unavailable .tile__flag{background:transparent;color:var(--muted);border:1px dashed var(--line)}
+.tile__title{font-size:14px;font-weight:700;color:var(--muted);margin:12px 0 0}
+.tile__value{font-size:32px;font-weight:800;letter-spacing:-1.2px;margin:2px 0 0;line-height:1.1}
+.tile__caption{font-size:12px;font-weight:600;color:var(--muted);margin:6px 0 0;flex:1}
+.tile__cta{
+  margin-top:12px;min-height:44px;border-radius:999px;border:none;cursor:pointer;
+  background:var(--red);color:#fff;font-size:14px;font-weight:700;width:100%;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.tile--confirm .tile__cta{background:var(--yellow);color:#1F1B16}
+.tile--done .tile__cta{background:var(--red-soft);color:var(--red)}
+.tile--unavailable{border-style:dashed;box-shadow:none;background:transparent}
+.tile--unavailable .tile__cta{background:transparent;border:1px dashed var(--line);color:var(--muted)}
+.tile--unavailable:hover{transform:none;box-shadow:none}
+
+/* ============ 分段标签（桌面） ============ */
+.seg{
+  display:inline-flex;gap:4px;padding:5px;border-radius:999px;background:#F5E9D9;
+  margin:28px 0 14px;max-width:100%;overflow-x:auto;scrollbar-width:none;
+}
+@media (prefers-color-scheme: dark){.seg{background:#2B241C}}
+.seg::-webkit-scrollbar{display:none}
+.seg__btn{
+  min-height:40px;padding:0 18px;border-radius:999px;border:none;background:transparent;
+  color:var(--muted);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;
+  transition:background .16s,color .16s,box-shadow .16s;
+}
+.seg__btn[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-sm)}
+
+/* ============ 面板 ============ */
+.panel[hidden]{display:none}
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);
+  box-shadow:var(--shadow);overflow:hidden;
+}
+.card + .card{margin-top:14px}
+.card__head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:16px 18px 12px;
+}
+.card__title{font-size:16px;font-weight:800;letter-spacing:-.3px;margin:0}
+.card__hint{font-size:12px;font-weight:600;color:var(--muted);margin:0}
+.card__body{padding:0 18px 16px}
+.card__body--flush{padding:0}
+
+/* ============ 兑礼进度 / 报销门槛 ============ */
+.reward{display:flex;gap:10px;padding:0 18px 12px;align-items:flex-start}
+.reward__star{color:var(--yellow-deep);font-size:15px;line-height:1.5;flex:0 0 auto}
+.reward__text{font-size:13px;font-weight:700;margin:0}
+.reward__note{font-size:11px;font-weight:600;color:var(--muted);margin:3px 0 0}
+.reimb{font-size:15px;font-weight:800;letter-spacing:-.2px;margin:0}
+.chips{display:flex;gap:8px;margin:0 0 10px;flex-wrap:wrap}
+.chipbtn{
+  min-height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink);font-size:14px;font-weight:800;cursor:pointer;
+  transition:background .15s,color .15s,border-color .15s;
+}
+.chipbtn[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+
+/* ============ 列表行 ============ */
+.list{list-style:none;margin:0;padding:0}
+.row{
+  display:flex;align-items:center;gap:14px;padding:14px 18px;
+  border-top:1px solid var(--line);min-height:72px;
+}
+.list > .row:first-child, .list > li:first-child > .row{border-top:none}
+.row__main{flex:1;min-width:0}
+.row__title{display:block;font-size:15px;font-weight:700;margin:0;letter-spacing:-.2px;overflow-wrap:anywhere}
+.row__meta{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:3px 0 0;overflow-wrap:anywhere}
+.row__side{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:0 0 auto}
+.amount{font-size:19px;font-weight:800;letter-spacing:-.6px;white-space:nowrap}
+.tag{
+  font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:4px;
+}
+.tag--pending{background:var(--red-soft);color:var(--red)}
+.tag--reviewed{background:var(--green-soft);color:var(--green)}
+.tag--unknown{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.row--check{cursor:pointer;align-items:flex-start}
+.row--check input{
+  width:22px;height:22px;margin:2px 0 0;flex:0 0 22px;accent-color:var(--red);cursor:pointer;
+}
+.row--selectable:hover{background:rgba(255,199,44,.08)}
+.row__wrap.is-marked .row{opacity:.5}
+.markbtn{
+  min-height:30px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);
+  background:transparent;color:var(--muted);font-size:11px;font-weight:800;cursor:pointer;
+  transition:color .15s,border-color .15s;
+}
+.markbtn:hover{border-color:var(--red);color:var(--red)}
+.markbtn.is-done{border-color:var(--green);color:var(--green)}
+.markfoot{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 18px;border-top:1px solid var(--line);font-size:12px;font-weight:700;color:var(--muted);
+  min-height:44px;
+}
+.markfoot:empty{display:none}
+.linkbtn{
+  border:none;background:transparent;color:var(--red);font-size:12px;font-weight:800;
+  cursor:pointer;min-height:32px;padding:0 4px;
+}
+
+/* ============ 提示块 ============ */
+.alert{
+  display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:var(--r-sm);
+  font-size:13px;font-weight:600;
+}
+.alert--warn{background:var(--yellow-soft);color:#6B4E0A}
+@media (prefers-color-scheme: dark){.alert--warn{color:var(--yellow)}}
+.alert--stale{background:var(--red-soft);color:var(--danger)}
+.alert__ico{font-weight:800;flex:0 0 auto;line-height:1.4}
+
+/* ============ 空状态 ============ */
+.empty{padding:30px 18px;text-align:center}
+.empty__icon{
+  width:56px;height:56px;border-radius:20px;display:grid;place-items:center;margin:0 auto 12px;
+  background:var(--yellow-soft);color:#8A6410;
+}
+.empty__title{font-size:15px;font-weight:700;margin:0 0 4px}
+.empty__desc{font-size:13px;font-weight:600;color:var(--muted);margin:0 0 14px}
+
+/* ============ 合计 / 资料 ============ */
+.total{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:16px 18px;border-top:1px solid var(--line);background:var(--cream);
+}
+@media (prefers-color-scheme: dark){.total{background:#1B1712}}
+.total__label{font-size:13px;font-weight:700;color:var(--muted)}
+.total__num{font-size:28px;font-weight:800;letter-spacing:-1px}
+.kv{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px dashed var(--line)}
+.kv:last-child{border-bottom:none}
+.kv dt{font-size:13px;font-weight:600;color:var(--muted);margin:0;flex:0 0 auto}
+.kv dd{margin:0;font-size:14px;font-weight:700;text-align:right;overflow-wrap:anywhere}
+.handoff{
+  border-radius:var(--r-sm);background:var(--green-soft);color:var(--green);
+  padding:12px 14px;font-size:13px;font-weight:700;display:flex;gap:8px;align-items:flex-start;
+}
+.prizes{list-style:none;margin:0;padding:0}
+.prizes li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px dashed var(--line);font-size:14px;font-weight:600}
+.prizes li:last-child{border-bottom:none}
+.prizes em{font-style:normal;font-size:12px;font-weight:700;color:var(--muted)}
+.note{font-size:12px;font-weight:600;color:var(--muted);margin:10px 0 0;line-height:1.5}
+
+/* ============ 抽奖确认 ============ */
+.confirm{
+  margin-top:14px;
+  border:2px solid var(--yellow);border-radius:var(--r-md);padding:16px 18px;background:var(--surface);
+  box-shadow:0 6px 20px rgba(255,199,44,.18);
+}
+.confirm__title{font-size:12px;font-weight:800;letter-spacing:.6px;color:var(--muted);margin:0 0 8px}
+.confirm__line{font-size:16px;font-weight:700;margin:0}
+.confirm__cost{
+  display:inline-flex;align-items:baseline;gap:6px;margin:10px 0 0;padding:8px 14px;
+  border-radius:12px;background:var(--yellow-soft);color:#6B4E0A;font-weight:800;
+}
+@media (prefers-color-scheme: dark){.confirm__cost{color:var(--yellow)}}
+.confirm__actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.confirm__actions .btn{flex:1 1 150px}
+#drawResult{margin-top:14px}
+
+/* ============ 时间线 ============ */
+.timeline{list-style:none;margin:0;padding:0}
+.timeline li{display:flex;gap:12px;padding:10px 0;font-size:13px;font-weight:600;color:var(--muted);border-bottom:1px dashed var(--line)}
+.timeline li:last-child{border-bottom:none}
+.timeline time{font-weight:800;color:var(--ink);flex:0 0 44px;font-variant-numeric:tabular-nums}
+
+/* ============ 页脚 ============ */
+.foot{margin:30px 0 0;padding:18px 0 8px;border-top:1px solid var(--line);text-align:center}
+.foot__logo{width:38px;height:38px;object-fit:contain;display:block;margin:0 auto 8px;opacity:.92}
+.foot p{font-size:11px;font-weight:700;color:var(--muted);margin:0 0 4px}
+.foot p:last-child{font-weight:500;line-height:1.6}
+
+/* ============ 底部导航（移动端） ============ */
+.tabbar{
+  display:none;position:fixed;left:0;right:0;bottom:0;z-index:40;
+  background:color-mix(in srgb,var(--surface) 92%,transparent);
+  backdrop-filter:saturate(1.6) blur(16px);border-top:1px solid var(--line);
+  padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+}
+.tabbar__in{display:grid;grid-template-columns:repeat(4,1fr);max-width:520px;margin:0 auto}
+.tabbar__btn{
+  border:none;background:transparent;color:var(--muted);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;min-height:52px;font-size:11px;font-weight:700;
+  cursor:pointer;border-radius:14px;
+}
+.tabbar__btn[aria-selected="true"]{color:var(--red)}
+.tabbar__btn[aria-selected="true"] svg{transform:translateY(-1px)}
+
+/* ============ 提示条 ============ */
+#toast{
+  position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translate(-50%,12px);
+  opacity:0;pointer-events:none;background:#1F1B16;color:#FFF8EE;font-size:13px;font-weight:700;
+  padding:12px 18px;border-radius:14px;max-width:min(92vw,420px);text-align:center;
+  transition:opacity .2s,transform .2s;z-index:60;box-shadow:var(--shadow-pop);
+}
+#toast[data-open="true"]{opacity:1;transform:translate(-50%,0)}
+
+/* ============ 响应式 ============ */
+@media (min-width:761px){
+  .content{padding:22px 24px 48px}
+  .hero{padding:24px 26px 26px;display:flex;align-items:center;gap:26px}
+  .hero__num strong{font-size:54px}
+  .hero__stats{display:flex;align-self:center}
+  #toast{bottom:28px}
+}
+@media (max-width:760px){
+  .content{padding:14px 14px 96px}
+  .appbar__in{padding:10px 14px}
+  .brand__title{font-size:16px}
+  .tiles{grid-template-columns:1fr;gap:12px}
+  .tile{min-height:0;padding:14px}
+  .tile__value{font-size:30px}
+  .seg{display:none}
+  .tabbar{display:block}
+  .row{flex-wrap:wrap;align-items:flex-start;padding:13px 14px}
+  .row__side{width:100%;flex-direction:row-reverse;align-items:center;justify-content:space-between;margin-top:4px}
+  .amount{font-size:20px}
+  .row--check{align-items:flex-start}
+  .card__head{padding:14px 14px 10px}
+  .card__body{padding:0 14px 14px}
+  .total{padding:14px}
+  .total__num{font-size:26px}
+  .confirm__actions .btn{flex:1 1 100%}
+  .panel{margin-top:0}
+  .section{margin:20px 0 10px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+<header class="appbar">
+  <div class="appbar__in">
+    <div class="brand">
+      <span class="brand__mark"><img src="assets/logo-192.png" alt="" width="44" height="44" decoding="async"></span>
+      <div class="brand__text">
+        <p class="brand__title">麦门订单管家</p>
+        <p class="brand__sub">个人效率工具 · 非麦当劳官方产品</p>
+      </div>
+    </div>
+    <span class="appbar__spacer"></span>
+    <button class="iconbtn" id="refreshBtn" type="button" aria-label="刷新数据" title="刷新">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20.5 12a8.5 8.5 0 1 1-2.5-6"/><path d="M20.5 4v5h-5"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main class="content">
+  <section class="hero" aria-labelledby="heroNum">
+    <div class="hero__main">
+      <div class="hero__top">
+        <span class="chip" id="scopeChip">—</span>
+        <span class="hero__sync" id="syncedAt">—</span>
+      </div>
+      <p class="hero__label">现在有</p>
+      <p class="hero__num" id="heroNum"><strong id="pendingTotal">—</strong><span>件权益待处理</span></p>
+      <div class="hero__actions">
+        <button class="btn btn--red" type="button" data-goto="orders">查看待评价订单</button>
+        <button class="btn btn--white" type="button" data-goto="invoice">整理开票资料</button>
+      </div>
+    </div>
+    <ul class="hero__stats" id="heroStats" aria-label="模块概况"></ul>
+  </section>
+
+  <div class="section">
+    <h2>权益看板</h2>
+    <p>三个模块，各自独立确认</p>
+  </div>
+  <section class="tiles" id="moduleCards" aria-label="三个模块"></section>
+
+  <nav class="seg" role="tablist" aria-label="模块切换">
+    <button class="seg__btn" role="tab" id="tab-orders" aria-controls="panel-orders" aria-selected="true" type="button">待评价订单</button>
+    <button class="seg__btn" role="tab" id="tab-invoice" aria-controls="panel-invoice" aria-selected="false" type="button">开票清单</button>
+    <button class="seg__btn" role="tab" id="tab-lottery" aria-controls="panel-lottery" aria-selected="false" type="button">抽奖管家</button>
+  </nav>
+
+  <section class="panel" id="panel-orders" role="tabpanel" aria-labelledby="tab-orders" tabindex="0"></section>
+  <section class="panel" id="panel-invoice" role="tabpanel" aria-labelledby="tab-invoice" tabindex="0" hidden></section>
+  <section class="panel" id="panel-lottery" role="tabpanel" aria-labelledby="tab-lottery" tabindex="0" hidden></section>
+
+  <div class="section">
+    <h2>最近动态</h2>
+  </div>
+  <div class="card"><ul class="timeline" id="timelineList" style="padding:6px 18px"></ul></div>
+
+  <footer class="foot">
+    <img class="foot__logo" src="assets/logo-192.png" alt="" width="38" height="38" decoding="async">
+    <p>个人效率工具 · 非麦当劳官方产品</p>
+    <p>数据来自你已授权的麦当劳 MCP 连接，仅在本机会话内处理，<br>不保存 Token、税号或完整订单原文。</p>
+  </footer>
+</main>
+
+<nav class="tabbar" aria-label="底部导航">
+  <div class="tabbar__in">
+    <button class="tabbar__btn" type="button" data-nav="home" aria-selected="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11.2 12 4l8 7.2"/><path d="M6.5 10v10h11V10"/></svg>
+      看板
+    </button>
+    <button class="tabbar__btn" type="button" data-nav="orders" aria-selected="false">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M9 8.5h6M9 12.5h6M9 16.5h3.5"/></svg>
+      待评价
+    </button>
+    <button class="tabbar__btn" type="button" data-nav="invoice" aria-selected="false">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h8.5L19 8v12.5H6z"/><path d="M14 3.5V8h5"/><path d="M12.5 11v4.5M10.8 12.6h3.4M10.8 14.4h3.4"/></svg>
+      开票
+    </button>
+    <button class="tabbar__btn" type="button" data-nav="lottery" aria-selected="false">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="8.5" width="17" height="4" rx="1.4"/><path d="M5 12.5v7h14v-7"/><path d="M12 8.5v11"/><path d="M12 8.5C9.6 8.5 8 7.3 8 5.9 8 4.9 8.8 4.2 9.7 4.2 11 4.2 12 6 12 8.5ZM12 8.5c2.4 0 4-1.2 4-2.6 0-1-.8-1.7-1.7-1.7C13 4.2 12 6 12 8.5Z"/></svg>
+      抽奖
+    </button>
+  </div>
+</nav>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="data.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var SNAP = window.MCD_SNAPSHOT || null;
+  var SVG = {
+    receipt:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M9 8.5h6M9 12.5h6M9 16.5h3.5"/></svg>',
+    invoice:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h8.5L19 8v12.5H6z"/><path d="M14 3.5V8h5"/><path d="M12.5 11v4.5M10.8 12.6h3.4M10.8 14.4h3.4"/></svg>',
+    gift:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="8.5" width="17" height="4" rx="1.4"/><path d="M5 12.5v7h14v-7"/><path d="M12 8.5v11"/><path d="M12 8.5C9.6 8.5 8 7.3 8 5.9 8 4.9 8.8 4.2 9.7 4.2 11 4.2 12 6 12 8.5ZM12 8.5c2.4 0 4-1.2 4-2.6 0-1-.8-1.7-1.7-1.7C13 4.2 12 6 12 8.5Z"/></svg>',
+    plug:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3v6M15 3v6"/><path d="M6 9h12v3a6 6 0 0 1-12 0z"/><path d="M12 18v3"/></svg>',
+    empty:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 10h8M8 14h5"/></svg>'
+  };
+
+  function esc(v){
+    return String(v == null ? "" : v).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+  function money(n){
+    if(n === null || n === undefined || isNaN(Number(n))) return "金额未知";
+    return "¥" + Number(n).toFixed(2);
+  }
+  function toast(msg){
+    var el = document.getElementById("toast");
+    el.textContent = msg;
+    el.setAttribute("data-open","true");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function(){ el.setAttribute("data-open","false"); }, 2800);
+  }
+  function tag(state, label){
+    var cls = state === "reviewed" ? "tag--reviewed"
+            : state === "likely_pending" ? "tag--pending" : "tag--unknown";
+    return '<span class="tag ' + cls + '">' + esc(label) + '</span>';
+  }
+
+  /* ---------- 三张模块卡 ---------- */
+  function renderCards(){
+    var host = document.getElementById("moduleCards");
+    if(!SNAP){ host.innerHTML = ""; return; }
+    var mods = (SNAP.capabilities || {}).modules || {};
+    host.innerHTML = SNAP.home.cards.map(function(card){
+      var mode = (mods[card.module] || {}).mode;
+      var unavailable = mode === "unsupported";
+      var cls = "tile tile--" + (unavailable ? "unavailable" : card.state);
+      var ico = card.module === "orders" ? SVG.receipt
+              : card.module === "invoice" ? SVG.invoice : SVG.gift;
+      if(unavailable) ico = SVG.plug;
+
+      var flagText = unavailable ? "不可用"
+                   : card.state === "pending" ? "待处理"
+                   : card.state === "confirm" ? "可参与" : "已清空";
+      var caption = unavailable
+        ? "缺少 " + esc(((mods[card.module]||{}).missing||[]).join("、") || "必需接口")
+        : esc(card.caption);
+      var action = unavailable ? "查看连接方式" : card.action;
+      return '<article class="' + cls + '" data-module="' + esc(card.module) + '">'
+        + '<div class="tile__head"><span class="tile__icon">' + ico + '</span>'
+        + '<span class="tile__flag">' + flagText + '</span></div>'
+        + '<p class="tile__title">' + esc(card.title) + '</p>'
+        + '<p class="tile__value mono">' + esc(card.value) + '</p>'
+        + '<p class="tile__caption">' + caption + '</p>'
+        + '<button class="tile__cta" type="button" data-goto="' + esc(unavailable ? "connect" : card.module) + '">'
+        + esc(action) + '</button></article>';
+    }).join("");
+  }
+
+  function emptyState(title, desc, actionLabel, actionAttr){
+    return '<div class="card"><div class="empty">'
+      + '<div class="empty__icon">' + SVG.empty + '</div>'
+      + '<p class="empty__title">' + esc(title) + '</p>'
+      + '<p class="empty__desc">' + esc(desc) + '</p>'
+      + (actionLabel ? '<button class="btn btn--outline" type="button" ' + actionAttr + '>' + esc(actionLabel) + '</button>' : '')
+      + '</div></div>';
+  }
+
+  /* ---------- 待评价 ---------- */
+  /* ---------- 本地「已评过」标记（只存订单号哈希） ---------- */
+  var MARK_KEY = "mm.reviewed.v1";
+  function hashId(text){
+    var h = 2166136261;
+    for(var i = 0; i < text.length; i++){
+      h ^= text.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return (h >>> 0).toString(36);
+  }
+  function loadMarked(){
+    try { return new Set(JSON.parse(localStorage.getItem(MARK_KEY) || "[]")); }
+    catch(e){ return new Set(); }
+  }
+  function saveMarked(set){
+    try { localStorage.setItem(MARK_KEY, JSON.stringify(Array.from(set))); } catch(e){}
+  }
+
+  function candidateRows(list, marked, showMarked){
+    return list.map(function(o){
+      var hash = o.order_id ? hashId(o.order_id) : "";
+      var isMarked = hash && marked.has(hash);
+      var cls = "row__wrap" + (isMarked ? " is-marked" : "");
+      var hidden = isMarked && !showMarked ? " hidden" : "";
+      return '<li class="' + cls + '" data-hash="' + esc(hash) + '"' + hidden + '>'
+        + '<div class="row">'
+        +   '<div class="row__main">'
+        +     '<p class="row__title">' + esc(o.store_name) + '</p>'
+        +     '<p class="row__meta">' + esc((o.created_at || "时间未知").slice(0,16))
+        +     ' · ' + esc((o.order_type_label || "类型未知").replace("（接口未定义）",""))
+        +     ' · ' + esc(o.status_label) + '</p>'
+        +   '</div>'
+        +   '<div class="row__side">'
+        +     '<span class="amount mono">' + money(o.paid_amount) + '</span>'
+        +     tag(o.review_state, isMarked ? "已评价" : o.review_label)
+        +     '<button class="markbtn' + (isMarked ? " is-done" : "") + '" type="button" data-mark="' + esc(hash) + '">'
+        +     (isMarked ? "撤销" : "已评过") + '</button>'
+        +   '</div>'
+        + '</div></li>';
+    }).join("");
+  }
+
+  function rewardLine(n, tiers){
+    if(!tiers || !tiers.length) return "";
+    if(n <= 0) return "当前没有待评价订单，暂时无法累计评价档位。";
+    var reached = tiers.filter(function(t){ return n >= t.count; });
+    var next = tiers.filter(function(t){ return n < t.count; })[0];
+    if(next){
+      var best = reached.length
+        ? "已达成 " + reached[reached.length - 1].count + " 好评（" + reached[reached.length - 1].gift + "）"
+        : "尚未达成任何档位";
+      return best + "；再评 " + (next.count - n) + " 单可达 " + next.count + " 好评（" + next.gift + "）。";
+    }
+    var top = tiers[tiers.length - 1];
+    return "已达成最高档 " + top.count + " 好评（" + top.gift + "）。";
+  }
+
+  function renderOrders(){
+    var host = document.getElementById("panel-orders");
+    if(!SNAP){
+      host.innerHTML = emptyState("还没有连接麦当劳 MCP", "连接后才能读取你的近期订单。", "查看连接方式", 'data-goto="connect"');
+      return;
+    }
+    var r = SNAP.review;
+    var candidates = r.candidates || (r.pending || []).concat(r.unknown || []);
+
+    if(r.counts.total === 0 || !candidates.length){
+      host.innerHTML = emptyState(
+        r.counts.total === 0 ? "当前返回范围内没有可处理订单" : "这些订单都显示为已评价",
+        r.counts.total === 0 ? "换一段时间或刷新后再看。" : "当前查询范围内没有待处理的评价。",
+        "重新查询", 'data-toast="请重新查询订单"'
+      );
+      return;
+    }
+
+    var marked = loadMarked();
+    var showMarked = false;
+    var tiers = (r.reward && r.reward.tiers) || [];
+
+    host.innerHTML = '<div class="card"><div class="card__head">'
+      + '<h3 class="card__title">待评价候选 <span id="candCount">' + candidates.length + '</span> 笔</h3>'
+      + '<p class="card__hint">统计范围：' + esc(r.scope.scope_note) + '</p></div>'
+      + '<div class="reward"><span class="reward__star" aria-hidden="true">★</span><div>'
+      +   '<p class="reward__text">评价兑礼：<span id="rewardText"></span></p>'
+      +   '<p class="reward__note">' + esc((r.reward && r.reward.note) || "档位规则因门店而异，以门店为准。") + '</p></div></div>'
+      + '<div class="card__body card__body--flush"><ul class="list" id="candList">'
+      + candidateRows(candidates, marked, showMarked)
+      + '</ul></div>'
+      + '<div class="markfoot" id="markFoot"></div></div>'
+      + '<div class="card"><div class="card__body" style="padding-top:16px">'
+      + '<div class="alert alert--warn" style="margin-bottom:12px"><span class="alert__ico">!</span>'
+      +   '<span>麦当劳接口不返回「是否已评价」。这里列出的是已完成订单，评过后点「已评过」即可隐藏；标记只存在本机浏览器。</span></div>'
+      + '<p class="note" style="margin-top:0">路径：' + esc(r.next_action.path) + '</p>'
+      + '<div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">'
+      + '<button class="btn btn--red" type="button" style="flex:1 1 180px" data-toast="已复制官方 App 评价路径">去官方 App 查看评价入口</button>'
+      + '<button class="btn btn--outline" type="button" style="flex:1 1 120px" data-toast="请重新查询订单">重新查询</button>'
+      + '</div></div></div>';
+
+    function refresh(){
+      var list = document.getElementById("candList");
+      var rows = list.querySelectorAll("[data-hash]");
+      var markedCount = 0;
+      rows.forEach(function(li){
+        var hash = li.getAttribute("data-hash");
+        var isMarked = marked.has(hash);
+        if(isMarked) markedCount++;
+        li.classList.toggle("is-marked", isMarked);
+        li.hidden = isMarked && !showMarked;
+        var btn = li.querySelector(".markbtn");
+        if(btn){
+          btn.textContent = isMarked ? "撤销" : "已评过";
+          btn.classList.toggle("is-done", isMarked);
+        }
+      });
+      var remaining = candidates.length - markedCount;
+      document.getElementById("candCount").textContent = remaining;
+      document.getElementById("rewardText").textContent = rewardLine(remaining, tiers);
+
+      var tile = document.querySelector('.tile[data-module="orders"] .tile__value');
+      if(tile) tile.textContent = remaining + " 笔";
+
+      var foot = document.getElementById("markFoot");
+      if(markedCount > 0){
+        foot.innerHTML = '<span>已标记 <b>' + markedCount + '</b> 笔已评</span>'
+          + '<button class="linkbtn" type="button" id="toggleMarked">' + (showMarked ? "收起已标记" : "显示已标记") + '</button>';
+        document.getElementById("toggleMarked").addEventListener("click", function(){
+          showMarked = !showMarked;
+          refresh();
+        });
+      } else {
+        foot.innerHTML = "";
+      }
+    }
+
+    host.addEventListener("click", function(e){
+      var btn = e.target.closest("[data-mark]");
+      if(!btn) return;
+      var hash = btn.getAttribute("data-mark");
+      if(marked.has(hash)) marked.delete(hash); else marked.add(hash);
+      saveMarked(marked);
+      refresh();
+    });
+
+    refresh();
+  }
+
+  /* ---------- 发票 ---------- */
+  function renderInvoice(){
+    var host = document.getElementById("panel-invoice");
+    if(!SNAP){ host.innerHTML = emptyState("还没有连接麦当劳 MCP", "连接后才能整理开票清单。", "查看连接方式", 'data-goto="connect"'); return; }
+    var inv = SNAP.invoice;
+    var p = inv.profile || {};
+
+    var rows = inv.candidates.map(function(o){
+      return '<li><label class="row row--check row--selectable">'
+        + '<input type="checkbox" checked data-invoice-row="' + esc(o.order_id) + '" '
+        + 'data-amount="' + (o.paid_amount == null ? "" : o.paid_amount) + '" '
+        + 'aria-label="选择 ' + esc(o.store_name) + ' 的订单">'
+        + '<span class="row__main">'
+        +   '<span class="row__title">' + esc(o.store_name) + '</span>'
+        +   '<span class="row__meta">' + esc((o.created_at || "").slice(0,10)) + ' · ' + esc(o.status_label) + '</span>'
+        + '</span>'
+        + '<span class="row__side"><span class="amount mono">' + money(o.paid_amount) + '</span>'
+        + '<span class="tag tag--reviewed">可开票</span></span>'
+        + '</label></li>';
+    }).join("");
+
+    var listCard = inv.candidates.length
+      ? '<div class="card"><div class="card__head"><h3 class="card__title">候选订单 ' + inv.count + ' 笔</h3>'
+        + '<p class="card__hint">' + (inv.filters.city ? esc(inv.filters.city) + ' · ' : '') + '金额取订单实付</p></div>'
+        + '<div class="card__body card__body--flush"><ul class="list">' + rows + '</ul></div>'
+        + '<div class="total"><span class="total__label">实付合计（已勾选）</span>'
+        + '<strong class="total__num mono" id="invoiceTotal">' + money(inv.total_amount) + '</strong></div></div>'
+      : '<div class="card"><div class="empty"><div class="empty__icon">' + SVG.empty + '</div>'
+        + '<p class="empty__title">当前筛选范围内没有可开票订单</p>'
+        + '<p class="empty__desc">统计范围：' + esc(SNAP.review.scope.scope_note) + '</p>'
+        + '<button class="btn btn--outline" type="button" data-toast="请重新查询订单">重新查询</button></div></div>';
+
+    var warn = (inv.warnings || []).map(function(w){
+      return '<p class="note">提示：' + esc(w) + '</p>';
+    }).join("");
+
+    var reimbs = inv.reimbursements || {};
+    var targetKeys = Object.keys(reimbs);
+    var targetCard = targetKeys.length
+      ? '<div class="card"><div class="card__head"><h3 class="card__title">报销门槛</h3>'
+        + '<p class="card__hint">按公司要求一键勾选</p></div>'
+        + '<div class="card__body"><div class="chips" id="targetChips">'
+        + targetKeys.map(function(key){
+            return '<button class="chipbtn" type="button" data-target="' + esc(key) + '" aria-pressed="false">¥' + esc(key) + '</button>';
+          }).join("")
+        + '</div><p class="reimb" id="reimbText">选一个门槛，会自动勾选刚好够的订单。</p>'
+        + '<p class="note">只会勾选真实订单；凑不够时提示差额，不会替你补单。</p></div></div>'
+      : "";
+
+    host.innerHTML = listCard
+      + targetCard
+      + '<div class="card"><div class="card__head"><h3 class="card__title">开票资料</h3>'
+      + '<p class="card__hint">仅在本次会话内使用</p></div>'
+      + '<div class="card__body"><dl style="margin:0">'
+      + '<div class="kv"><dt>抬头</dt><dd>' + esc(p.company_name || "未填写") + '</dd></div>'
+      + '<div class="kv"><dt>税号</dt><dd class="mono">' + esc(p.tax_id_masked || "未填写") + '</dd></div>'
+      + '<div class="kv"><dt>接收邮箱</dt><dd class="mono">' + esc(p.email_masked || "未填写") + '</dd></div>'
+      + '</dl>' + warn
+      + (p.uscc_valid === false ? '<p class="note">税号未通过校验位检查，请在提交前人工核对。</p>' : '')
+      + '</div></div>'
+      + '<div class="card"><div class="card__body" style="padding-top:16px">'
+      + '<div class="handoff"><span aria-hidden="true">→</span><span>' + esc(inv.handoff.path) + '</span></div>'
+      + '<p class="note">本工具不代替你提交发票，也不会修改订单金额、门店或城市。</p>'
+      + '<button class="btn btn--red btn--block" type="button" style="margin-top:12px" data-toast="已复制开票路径">打开官方 App</button>'
+      + '</div></div>';
+
+    host.querySelectorAll("[data-invoice-row]").forEach(function(box){
+      box.addEventListener("change", function(){
+        var sum = 0;
+        host.querySelectorAll("[data-invoice-row]").forEach(function(item){
+          if(item.checked && item.dataset.amount !== ""){ sum += Number(item.dataset.amount); }
+        });
+        var totalEl = document.getElementById("invoiceTotal");
+        if(totalEl){ totalEl.textContent = money(sum); }
+      });
+    });
+
+    var chips = document.getElementById("targetChips");
+    if(chips && targetKeys.length){
+      var applyTarget = function(key){
+        var plan = reimbs[key];
+        var textEl = document.getElementById("reimbText");
+        if(textEl){ textEl.textContent = plan.text; }
+        if(plan.reachable){
+          var chosen = {};
+          (plan.selected || []).forEach(function(id){ chosen[id] = true; });
+          host.querySelectorAll("[data-invoice-row]").forEach(function(box){
+            box.checked = !!chosen[box.getAttribute("data-invoice-row")];
+            box.dispatchEvent(new Event("change", {bubbles:true}));
+          });
+        }
+        chips.querySelectorAll(".chipbtn").forEach(function(btn){
+          btn.setAttribute("aria-pressed", btn.getAttribute("data-target") === key ? "true" : "false");
+        });
+      };
+      chips.addEventListener("click", function(e){
+        var btn = e.target.closest(".chipbtn");
+        if(btn){ applyTarget(btn.getAttribute("data-target")); }
+      });
+      var preset = new URLSearchParams(window.location.search).get("target");
+      if(preset && reimbs[preset]){ applyTarget(preset); }
+    }
+  }
+
+  /* ---------- 抽奖 ---------- */
+  function renderLottery(){
+    var host = document.getElementById("panel-lottery");
+    if(!SNAP){ host.innerHTML = emptyState("还没有连接麦当劳 MCP", "连接后才能查询抽奖活动。", "查看连接方式", 'data-goto="connect"'); return; }
+    var lot = SNAP.lottery;
+    if(!lot){
+      host.innerHTML = emptyState("还没有查询抽奖活动", "查询后再决定要不要参与。", "查询抽奖活动", 'data-toast="请查询抽奖活动"');
+      return;
+    }
+    var s = lot.summary || {};
+    var stale = lot.staleness && lot.staleness.is_stale;
+
+    if(stale){
+      host.innerHTML = '<div class="card"><div class="card__head"><h3 class="card__title">' + esc(s.activity_name || "未知活动") + '</h3>'
+        + '<p class="card__hint">状态：' + esc(s.status || "未知") + '</p></div>'
+        + '<div class="card__body"><div class="alert alert--stale"><span class="alert__ico">!</span>'
+        + '<span>数据已过期（超过 ' + (lot.staleness.ttl_seconds || 30) + ' 秒），执行前必须重新查询。</span></div>'
+        + '<p class="note">过期数据不保留执行按钮，避免用旧资源扣费。</p>'
+        + '<button class="btn btn--red btn--block" type="button" style="margin-top:12px" data-toast="请重新查询抽奖活动">重新查询</button>'
+        + '</div></div>';
+      return;
+    }
+
+    var prizeList = (s.prizes || []).map(function(p){
+      return '<li><span>' + esc(p.name) + '</span><em>' + esc(p.type_text || "") + '</em></li>';
+    }).join("");
+
+    host.innerHTML = '<div class="card"><div class="card__head">'
+      + '<h3 class="card__title">' + esc(s.activity_name || "活动信息") + '</h3>'
+      + '<p class="card__hint">' + esc(s.status || "未知") + '</p></div>'
+      + '<div class="card__body"><dl style="margin:0">'
+      + '<div class="kv"><dt>单次消耗</dt><dd class="mono">' + (s.draw_cost == null ? "未知" : esc(s.draw_cost) + " " + esc(s.cost_unit || "积分")) + '</dd></div>'
+      + '<div class="kv"><dt>可用积分</dt><dd class="mono">' + (s.available_point == null ? "未知" : esc(s.available_point)) + '</dd></div>'
+      + '<div class="kv"><dt>可用次数</dt><dd class="mono">' + (s.available_count == null ? "未知" : esc(s.available_count)) + '</dd></div>'
+      + '</dl></div></div>'
+
+      + '<div class="card"><div class="card__head"><h3 class="card__title">可能奖品</h3>'
+      + '<p class="card__hint">共 ' + (s.prizes || []).length + ' 种</p></div>'
+      + '<div class="card__body"><ul class="prizes">' + (prizeList || '<li><span>接口未返回奖品</span></li>') + '</ul></div></div>'
+
+      + '<div class="confirm" id="drawConfirm"><p class="confirm__title">本次操作</p>'
+      + '<p class="confirm__line">抽奖 1 次</p>'
+      + (s.draw_cost == null ? '' : '<p class="confirm__cost mono">消耗 ' + esc(s.draw_cost) + ' ' + esc(s.cost_unit || "积分") + '</p>')
+      + '<p class="note">只有你确认后才会调用一次抽奖接口；失败或超时不会自动重试。</p>'
+      + '<div class="confirm__actions"><button class="btn btn--red" type="button" id="drawBtn">确认抽 1 次</button>'
+      + '<button class="btn btn--outline" type="button" data-toast="已取消，未发起抽奖">取消</button></div></div>'
+
+      + '<div class="card" id="drawResult" hidden style="border-color:var(--green)">'
+      + '<div class="card__head"><h3 class="card__title">示例结果</h3><p class="card__hint">界面预演，未真实抽奖</p></div>'
+      + '<div class="card__body"><p class="confirm__line">中奖 —— 免费中薯条</p>'
+      + '<p class="note">本次消耗 100 积分 · 剩余积分 220 / 剩余次数 1 · 有效期至 2026-11-20</p></div></div>';
+
+    var btn = document.getElementById("drawBtn");
+    if(btn){
+      btn.addEventListener("click", function(){
+        btn.disabled = true;
+        btn.textContent = "已提交（预演）";
+        document.getElementById("drawResult").hidden = false;
+        toast("界面预演：未发起真实抽奖，真实执行需在对话中确认");
+      });
+    }
+  }
+
+  /* ---------- 时间线 ---------- */
+  function renderTimeline(){
+    var host = document.getElementById("timelineList");
+    if(!SNAP){ host.innerHTML = '<li><time>—</time><span>尚未同步</span></li>'; return; }
+    host.innerHTML = SNAP.home.timeline.map(function(item){
+      return '<li><time>' + esc((item.date || "").slice(5)) + '</time><span>' + esc(item.text) + '</span></li>';
+    }).join("");
+  }
+
+  /* ---------- 切换 ---------- */
+  function activateTab(name){
+    ["orders","invoice","lottery"].forEach(function(key){
+      var on = key === name;
+      var tab = document.getElementById("tab-" + key);
+      if(tab){ tab.setAttribute("aria-selected", on ? "true" : "false"); tab.tabIndex = on ? 0 : -1; }
+      document.getElementById("panel-" + key).hidden = !on;
+    });
+    document.querySelectorAll(".tabbar__btn").forEach(function(btn){
+      btn.setAttribute("aria-selected", btn.getAttribute("data-nav") === name ? "true" : "false");
+    });
+  }
+
+  function scrollToPanel(name){
+    var el = document.getElementById("panel-" + name);
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollIntoView({behavior: reduce ? "auto" : "smooth", block:"start"});
+  }
+
+  document.querySelector(".seg").addEventListener("click", function(e){
+    var btn = e.target.closest(".seg__btn");
+    if(!btn) return;
+    activateTab(btn.id.replace("tab-",""));
+  });
+
+  document.querySelector(".seg").addEventListener("keydown", function(e){
+    var keys = ["orders","invoice","lottery"];
+    var idx = keys.findIndex(function(k){
+      return document.getElementById("tab-" + k).getAttribute("aria-selected") === "true";
+    });
+    if(e.key === "ArrowRight" || e.key === "ArrowLeft"){
+      e.preventDefault();
+      var next = e.key === "ArrowRight" ? (idx + 1) % keys.length : (idx + keys.length - 1) % keys.length;
+      activateTab(keys[next]);
+      document.getElementById("tab-" + keys[next]).focus();
+    }
+  });
+
+  document.querySelector(".tabbar__in").addEventListener("click", function(e){
+    var btn = e.target.closest(".tabbar__btn");
+    if(!btn) return;
+    var nav = btn.getAttribute("data-nav");
+    if(nav === "home"){
+      window.scrollTo({top:0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+      document.querySelectorAll(".tabbar__btn").forEach(function(b){
+        b.setAttribute("aria-selected", b === btn ? "true" : "false");
+      });
+      return;
+    }
+    activateTab(nav);
+    scrollToPanel(nav);
+  });
+
+  document.addEventListener("click", function(e){
+    var go = e.target.closest("[data-goto]");
+    if(go){
+      var dest = go.getAttribute("data-goto");
+      if(dest === "connect"){
+        toast("在 WorkBuddy 连接器里添加麦当劳 MCP 并粘贴你自己的 Token");
+        return;
+      }
+      activateTab(dest);
+      scrollToPanel(dest);
+      return;
+    }
+    var tip = e.target.closest("[data-toast]");
+    if(tip){ toast(tip.getAttribute("data-toast")); }
+  });
+
+  document.getElementById("refreshBtn").addEventListener("click", function(){
+    toast("请让 WorkBuddy 重新调用 order-list / query-lottery-info");
+  });
+
+  /* ---------- 启动 ---------- */
+  function boot(){
+    if(SNAP){
+      document.getElementById("pendingTotal").textContent = SNAP.home.pending_total;
+      document.getElementById("syncedAt").textContent = "最近同步 " + (SNAP.generated_at || "—").slice(5,16);
+      document.getElementById("scopeChip").textContent = (SNAP.invoice.filters.city ? SNAP.invoice.filters.city + " · " : "") + SNAP.review.scope.scope_note;
+      var stats = document.getElementById("heroStats");
+      if(stats && SNAP.home.cards){
+        stats.innerHTML = SNAP.home.cards.map(function(c){
+          return '<li><b class="mono">' + esc(c.value) + '</b><span>' + esc(c.title) + '</span></li>';
+        }).join("");
+      }
+    }
+    renderCards();
+    renderOrders();
+    renderInvoice();
+    renderLottery();
+    renderTimeline();
+    var initial = (window.location.hash || "").replace("#", "");
+    activateTab(["orders","invoice","lottery"].indexOf(initial) >= 0 ? initial : "orders");
+  }
+  boot();
+})();
+</script>
+</body>
+</html>

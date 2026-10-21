@@ -1,0 +1,123 @@
+{
+  "_fixture": "按麦当劳 MCP 官方 order-list 返回结构构造的离线样例，仅用于测试与界面预演；不含任何真实订单。",
+  "data": {
+    "list": [
+      {
+        "orderId": "DD20261020001",
+        "orderType": "1",
+        "createTime": "2026-10-20 12:31:05",
+        "storeCode": "SH0001",
+        "storeName": "麦当劳·上海南京东路店",
+        "orderStatus": "订单已完成",
+        "orderStatusCode": 8,
+        "realTotalAmount": "55",
+        "orderProductList": [
+          { "productCode": "BUR001", "productName": "巨无霸", "quantity": 1 },
+          { "productCode": "DRK001", "productName": "可口可乐(中)", "quantity": 1 }
+        ]
+      },
+      {
+        "orderId": "DD20261020002",
+        "orderType": "1",
+        "createTime": "2026-10-20 08:12:40",
+        "storeCode": "SH0002",
+        "storeName": "麦当劳·上海徐家汇店",
+        "orderStatus": "订单已完成",
+        "orderStatusCode": 0,
+        "realTotalAmount": "42",
+        "orderProductList": [
+          { "productCode": "CBO001", "productName": "麦辣鸡腿堡套餐", "quantity": 1 }
+        ]
+      },
+      {
+        "orderId": "DD20261018003",
+        "orderType": "1",
+        "createTime": "2026-10-18 19:02:11",
+        "storeCode": "SH0003",
+        "storeName": "麦当劳·上海陆家嘴店",
+        "orderStatus": "订单已完成",
+        "orderStatusCode": "0",
+        "realTotalAmount": "31.5",
+        "orderProductList": [
+          { "productCode": "DES001", "productName": "麦旋风", "quantity": 2 }
+        ]
+      },
+      {
+        "orderId": "DD20261017004",
+        "orderType": "2",
+        "createTime": "2026-10-17 18:45:00",
+        "storeCode": "BJ0001",
+        "storeName": "麦当劳·北京国贸店",
+        "orderStatus": "订单已完成",
+        "realTotalAmount": "12",
+        "orderProductList": [
+          { "productCode": "SID001", "productName": "中薯条", "quantity": 1 }
+        ]
+      },
+      {
+        "orderId": "DD20261016005",
+        "orderType": "1",
+        "createTime": "2026-10-16 11:20:30",
+        "storeCode": "SZ0001",
+        "storeName": "麦当劳·深圳华强北店",
+        "cityName": "深圳",
+        "orderStatus": "订单已完成",
+        "orderStatusCode": 8,
+        "realTotalAmount": "38.5",
+        "orderProductList": []
+      },
+      {
+        "orderId": "DD20261015006",
+        "orderType": "1",
+        "createTime": "2026-10-15 09:05:00",
+        "storeCode": "SH0002",
+        "storeName": "麦当劳·上海徐家汇店",
+        "orderStatus": "订单已取消",
+        "realTotalAmount": "28",
+        "orderProductList": []
+      },
+      {
+        "orderId": "DD20261014007",
+        "orderType": "1",
+        "createTime": "2026-10-14 12:00:00",
+        "storeCode": "SH0002",
+        "storeName": "麦当劳·上海徐家汇店",
+        "orderStatus": "待支付",
+        "realTotalAmount": "15.5",
+        "orderProductList": []
+      },
+      {
+        "orderId": "DD20261013008",
+        "orderType": "3",
+        "createTime": "2026-10-13 12:30:00",
+        "storeCode": "SH0004",
+        "storeName": "麦当劳·上海人民广场店",
+        "orderStatus": "配送中",
+        "realTotalAmount": "20",
+        "orderProductList": []
+      },
+      {
+        "orderId": "DD20261012009",
+        "orderType": "1",
+        "createTime": "2026-10-12 13:10:00",
+        "storeCode": "SH0003",
+        "storeName": "麦当劳·上海陆家嘴店",
+        "orderStatus": "订单已完成",
+        "orderStatusCode": 0,
+        "realTotalAmount": "42",
+        "orderProductList": []
+      },
+      {
+        "orderId": "DD20261011010",
+        "orderType": "1",
+        "createTime": "2026-10-11 19:40:00",
+        "storeCode": "SH0001",
+        "storeName": "麦当劳·上海南京东路店",
+        "orderStatus": "订单已完成",
+        "orderStatusCode": 8,
+        "realTotalAmount": "26",
+        "orderProductList": []
+      }
+    ]
+  }
+}

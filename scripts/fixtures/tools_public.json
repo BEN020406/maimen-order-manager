@@ -1,0 +1,110 @@
+{
+  "_fixture": "模拟 tools/list 返回：2026-10-21 实测的 35 个真实工具名（不含 issue-invoice / submit-review）。",
+  "tools": [
+    {
+      "name": "query-survey-coupon"
+    },
+    {
+      "name": "query-lottery-info"
+    },
+    {
+      "name": "mall-create-order"
+    },
+    {
+      "name": "query-meals"
+    },
+    {
+      "name": "campaign-calendar"
+    },
+    {
+      "name": "query-order"
+    },
+    {
+      "name": "order-list"
+    },
+    {
+      "name": "query-party-store-session"
+    },
+    {
+      "name": "query-nearby-stores"
+    },
+    {
+      "name": "query-meal-assistance"
+    },
+    {
+      "name": "query-party-city"
+    },
+    {
+      "name": "auto-bind-coupons"
+    },
+    {
+      "name": "query-store-coupons"
+    },
+    {
+      "name": "create-order"
+    },
+    {
+      "name": "calculate-price"
+    },
+    {
+      "name": "query-my-prizes"
+    },
+    {
+      "name": "query-party-store-date"
+    },
+    {
+      "name": "available-coupons"
+    },
+    {
+      "name": "cancel-order"
+    },
+    {
+      "name": "now-time-info"
+    },
+    {
+      "name": "delivery-create-address"
+    },
+    {
+      "name": "delivery-query-addresses"
+    },
+    {
+      "name": "query-promotions"
+    },
+    {
+      "name": "query-my-coupons"
+    },
+    {
+      "name": "list-nutrition-foods"
+    },
+    {
+      "name": "draw-lottery"
+    },
+    {
+      "name": "mall-product-detail"
+    },
+    {
+      "name": "mall-order-list"
+    },
+    {
+      "name": "query-party-store"
+    },
+    {
+      "name": "delivery-query-stores"
+    },
+    {
+      "name": "mall-order-detail"
+    },
+    {
+      "name": "party-order-create"
+    },
+    {
+      "name": "query-meal-detail"
+    },
+    {
+      "name": "query-my-account"
+    },
+    {
+      "name": "mall-points-products"
+    }
+  ]
+}

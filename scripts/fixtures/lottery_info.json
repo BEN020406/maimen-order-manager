@@ -1,0 +1,25 @@
+{
+  "_fixture": "按 query-lottery-info 官方返回结构构造的离线样例。",
+  "data": {
+    "status": { "code": "SUCCESS", "message": "ok" },
+    "activityCode": "2m2t",
+    "activityName": "麦麦幸运抽",
+    "activityStatusText": "进行中",
+    "beginTime": "2026-10-01 00:00:00",
+    "endTime": "2026-10-31 23:59:59",
+    "drawPoint": 100,
+    "drawTypeText": "积分抽奖",
+    "availableTimes": 2,
+    "availablePoint": 320,
+    "drawDecision": {
+      "resourceEligible": true,
+      "reason": "积分充足，可参与抽奖",
+      "nextConsumption": { "type": "points", "points": 100, "text": "消耗 100 积分" }
+    },
+    "prizes": [
+      { "name": "免费中薯条", "typeText": "优惠券", "imageUrl": "" },
+      { "name": "麦金卡 7 天体验", "typeText": "权益卡", "imageUrl": "" },
+      { "name": "满 30 减 5 券", "typeText": "优惠券", "imageUrl": "" }
+    ]
+  }
+}

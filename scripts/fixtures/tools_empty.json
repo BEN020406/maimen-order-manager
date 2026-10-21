@@ -1,0 +1,7 @@
+{
+  "_fixture": "模拟 tools/list 返回：连 order-list 都缺失的降级场景，用于验证 UNSUPPORTED 路径。",
+  "tools": [
+    { "name": "now-time-info" },
+    { "name": "query-meals" }
+  ]
+}

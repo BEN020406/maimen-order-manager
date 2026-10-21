@@ -1,0 +1,17 @@
+{
+  "_fixture": "按 draw-lottery 官方返回结构构造的离线样例（演示用，非真实中奖记录）。",
+  "data": {
+    "status": { "code": "SUCCESS", "message": "ok" },
+    "win": true,
+    "prizes": [
+      {
+        "name": "免费中薯条",
+        "typeText": "优惠券",
+        "validDateInfo": "2026-11-20 前有效"
+      }
+    ],
+    "consumePoint": 100,
+    "remainPoint": 220,
+    "remainChance": 1
+  }
+}
