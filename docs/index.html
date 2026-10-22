@@ -314,6 +314,14 @@ button{font-family:inherit}
 .foot__logo{width:38px;height:38px;object-fit:contain;display:block;margin:0 auto 8px;opacity:.92}
 .foot p{font-size:11px;font-weight:700;color:var(--muted);margin:0 0 4px}
 .foot p:last-child{font-weight:500;line-height:1.6}
+.foot__star{
+  display:inline-flex;align-items:center;gap:6px;margin:2px 0 10px;
+  padding:8px 16px;border-radius:999px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink);font-size:12px;font-weight:800;
+  text-decoration:none;min-height:38px;
+}
+.foot__star:hover{border-color:var(--yellow-deep);background:var(--yellow-soft)}
+.foot__star span{color:var(--red)}
 
 /* ============ 底部导航（移动端） ============ */
 .tabbar{
@@ -433,6 +441,9 @@ button{font-family:inherit}
 
   <footer class="foot">
     <img class="foot__logo" src="assets/logo-192.png" alt="" width="38" height="38" decoding="async">
+    <a class="foot__star" href="https://github.com/BEN020406/maimen-order-manager" target="_blank" rel="noopener">
+      <span aria-hidden="true">★</span> 在 GitHub 上点个 Star
+    </a>
     <p>个人效率工具 · 非麦当劳官方产品</p>
     <p>数据来自你已授权的麦当劳 MCP 连接，仅在本机会话内处理，<br>不保存 Token、税号或完整订单原文。</p>
   </footer>
