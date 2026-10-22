@@ -174,6 +174,7 @@ button{font-family:inherit}
 
 /* ============ 面板 ============ */
 .panel[hidden]{display:none}
+.dash[hidden]{display:none!important}
 .card{
   background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);
   box-shadow:var(--shadow);overflow:hidden;
@@ -402,7 +403,7 @@ button{font-family:inherit}
 </header>
 
 <main class="content">
-  <section class="hero" aria-labelledby="heroNum">
+  <section class="hero dash" aria-labelledby="heroNum">
     <div class="hero__main">
       <div class="hero__top">
         <span class="chip" id="scopeChip">—</span>
@@ -418,11 +419,11 @@ button{font-family:inherit}
     <ul class="hero__stats" id="heroStats" aria-label="模块概况"></ul>
   </section>
 
-  <div class="section">
+  <div class="section dash">
     <h2>权益看板</h2>
     <p>三个模块，各自独立确认</p>
   </div>
-  <section class="tiles" id="moduleCards" aria-label="三个模块"></section>
+  <section class="tiles dash" id="moduleCards" aria-label="三个模块"></section>
 
   <nav class="seg" role="tablist" aria-label="模块切换">
     <button class="seg__btn" role="tab" id="tab-orders" aria-controls="panel-orders" aria-selected="true" type="button">待评价订单</button>
@@ -434,10 +435,10 @@ button{font-family:inherit}
   <section class="panel" id="panel-invoice" role="tabpanel" aria-labelledby="tab-invoice" tabindex="0" hidden></section>
   <section class="panel" id="panel-lottery" role="tabpanel" aria-labelledby="tab-lottery" tabindex="0" hidden></section>
 
-  <div class="section">
+  <div class="section dash">
     <h2>最近动态</h2>
   </div>
-  <div class="card"><ul class="timeline" id="timelineList" style="padding:6px 18px"></ul></div>
+  <div class="card dash"><ul class="timeline" id="timelineList" style="padding:6px 18px"></ul></div>
 
   <footer class="foot">
     <img class="foot__logo" src="assets/logo-192.png" alt="" width="38" height="38" decoding="async">
@@ -873,12 +874,15 @@ button{font-family:inherit}
 
   /* ---------- 切换 ---------- */
   function activateTab(name){
+    var mobile = window.matchMedia("(max-width:760px)").matches;
+    document.querySelectorAll(".dash").forEach(function(el){ el.hidden = mobile && name !== "home"; });
     ["orders","invoice","lottery"].forEach(function(key){
       var on = key === name;
       var tab = document.getElementById("tab-" + key);
       if(tab){ tab.setAttribute("aria-selected", on ? "true" : "false"); tab.tabIndex = on ? 0 : -1; }
       document.getElementById("panel-" + key).hidden = !on;
     });
+    if(mobile){ window.scrollTo(0, 0); }
     document.querySelectorAll(".tabbar__btn").forEach(function(btn){
       btn.setAttribute("aria-selected", btn.getAttribute("data-nav") === name ? "true" : "false");
     });

@@ -174,6 +174,7 @@ button{font-family:inherit}
 
 /* ============ 面板 ============ */
 .panel[hidden]{display:none}
+.dash[hidden]{display:none!important}
 .card{
   background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);
   box-shadow:var(--shadow);overflow:hidden;
@@ -314,6 +315,14 @@ button{font-family:inherit}
 .foot__logo{width:38px;height:38px;object-fit:contain;display:block;margin:0 auto 8px;opacity:.92}
 .foot p{font-size:11px;font-weight:700;color:var(--muted);margin:0 0 4px}
 .foot p:last-child{font-weight:500;line-height:1.6}
+.foot__star{
+  display:inline-flex;align-items:center;gap:6px;margin:2px 0 10px;
+  padding:8px 16px;border-radius:999px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink);font-size:12px;font-weight:800;
+  text-decoration:none;min-height:38px;
+}
+.foot__star:hover{border-color:var(--yellow-deep);background:var(--yellow-soft)}
+.foot__star span{color:var(--red)}
 
 /* ============ 底部导航（移动端） ============ */
 .tabbar{
@@ -394,7 +403,7 @@ button{font-family:inherit}
 </header>
 
 <main class="content">
-  <section class="hero" aria-labelledby="heroNum">
+  <section class="hero dash" aria-labelledby="heroNum">
     <div class="hero__main">
       <div class="hero__top">
         <span class="chip" id="scopeChip">—</span>
@@ -410,11 +419,11 @@ button{font-family:inherit}
     <ul class="hero__stats" id="heroStats" aria-label="模块概况"></ul>
   </section>
 
-  <div class="section">
+  <div class="section dash">
     <h2>权益看板</h2>
     <p>三个模块，各自独立确认</p>
   </div>
-  <section class="tiles" id="moduleCards" aria-label="三个模块"></section>
+  <section class="tiles dash" id="moduleCards" aria-label="三个模块"></section>
 
   <nav class="seg" role="tablist" aria-label="模块切换">
     <button class="seg__btn" role="tab" id="tab-orders" aria-controls="panel-orders" aria-selected="true" type="button">待评价订单</button>
@@ -426,13 +435,16 @@ button{font-family:inherit}
   <section class="panel" id="panel-invoice" role="tabpanel" aria-labelledby="tab-invoice" tabindex="0" hidden></section>
   <section class="panel" id="panel-lottery" role="tabpanel" aria-labelledby="tab-lottery" tabindex="0" hidden></section>
 
-  <div class="section">
+  <div class="section dash">
     <h2>最近动态</h2>
   </div>
-  <div class="card"><ul class="timeline" id="timelineList" style="padding:6px 18px"></ul></div>
+  <div class="card dash"><ul class="timeline" id="timelineList" style="padding:6px 18px"></ul></div>
 
   <footer class="foot">
     <img class="foot__logo" src="assets/logo-192.png" alt="" width="38" height="38" decoding="async">
+    <a class="foot__star" href="https://github.com/BEN020406/maimen-order-manager" target="_blank" rel="noopener">
+      <span aria-hidden="true">★</span> 在 GitHub 上点个 Star
+    </a>
     <p>个人效率工具 · 非麦当劳官方产品</p>
     <p>数据来自你已授权的麦当劳 MCP 连接，仅在本机会话内处理，<br>不保存 Token、税号或完整订单原文。</p>
   </footer>
@@ -862,12 +874,15 @@ button{font-family:inherit}
 
   /* ---------- 切换 ---------- */
   function activateTab(name){
+    var mobile = window.matchMedia("(max-width:760px)").matches;
+    document.querySelectorAll(".dash").forEach(function(el){ el.hidden = mobile && name !== "home"; });
     ["orders","invoice","lottery"].forEach(function(key){
       var on = key === name;
       var tab = document.getElementById("tab-" + key);
       if(tab){ tab.setAttribute("aria-selected", on ? "true" : "false"); tab.tabIndex = on ? 0 : -1; }
       document.getElementById("panel-" + key).hidden = !on;
     });
+    if(mobile){ window.scrollTo(0, 0); }
     document.querySelectorAll(".tabbar__btn").forEach(function(btn){
       btn.setAttribute("aria-selected", btn.getAttribute("data-nav") === name ? "true" : "false");
     });
